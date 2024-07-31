@@ -79,7 +79,9 @@ struct CalcHome: View {
             displayText = "0"
             typing = false
         case "B":
-            if typing {
+            if displayText.count == 1 {
+                displayText = "0"
+            } else if typing {
                 displayText = String(displayText.dropLast())
             }
         case "=":
