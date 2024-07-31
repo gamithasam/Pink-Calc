@@ -11,7 +11,7 @@ struct CalcHome: View {
     @State var displayText: String = "0"
     @State var typing: Bool = false
     @State var equalPressed: Bool = false
-    
+    @State var history: [String] = []
     
     var resultText: String {
         calculate()
@@ -56,6 +56,7 @@ struct CalcHome: View {
             withAnimation {
                 equalPressed = true
             }
+            history.append(resultText) // TODO!! displayText should also be recorded
         } else {
             if equalPressed {
                 displayText = resultText
@@ -100,7 +101,9 @@ struct CalcHome: View {
         } else {
             // Handle expressions with operators at last
             var validExpression = displayText
-            if let lastChar = validExpression.last, "+-×÷".contains(lastChar) {
+                .replacingOccurrences(of: "×", with: "*")
+                .replacingOccurrences(of: "÷", with: "/")
+            if let lastChar = validExpression.last, "+-*/".contains(lastChar) {
                 validExpression.removeLast()
             }
             // Convert expression to NSExpression
