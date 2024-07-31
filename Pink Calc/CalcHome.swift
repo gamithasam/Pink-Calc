@@ -20,6 +20,12 @@ struct CalcHome: View {
     var body: some View {
         GeometryReader { geometry in
             VStack {
+                HStack {
+                    Spacer()
+                    Image(systemName: "clock.arrow.circlepath")
+                }
+                .padding(.trailing)
+                
                 Spacer()
                 
                 VStack {
@@ -51,13 +57,16 @@ struct CalcHome: View {
                 equalPressed = true
             }
         } else {
+            if equalPressed {
+                displayText = resultText
+            }
             withAnimation {
                 equalPressed = false
             }
         }
         
         switch label {
-        case "+", "-", "*", "/":
+        case "+", "-", "×", "÷":
             displayText += label
             typing = true
         case "%":
@@ -89,12 +98,14 @@ struct CalcHome: View {
         if displayText.contains("/0") {
             return "Can't divide by zero"
         } else {
-            // Handle invalid expressions
+            // Handle expressions with operators at last
             var validExpression = displayText
-            if let lastChar = validExpression.last, "+-*/".contains(lastChar) {
+            if let lastChar = validExpression.last, "+-×÷".contains(lastChar) {
                 validExpression.removeLast()
             }
+            // Convert expression to NSExpression
             let expression = NSExpression(format: validExpression)
+            // Handle invalid NSExpressions
             if let result = expression.expressionValue(with: nil, context: nil) as? Double {
                 // Display int as int
                 if result.truncatingRemainder(dividingBy: 1) == 0 {

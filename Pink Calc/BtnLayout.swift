@@ -13,8 +13,8 @@ struct BtnLayout: View {
     
     var body: some View {
         let labels = [
-            [clearLabel, "B", "%", "/"],
-                ["7", "8", "9", "*"],
+            [clearLabel, "B", "%", "÷"],
+                ["7", "8", "9", "×"],
                 ["4", "5", "6", "-"],
                 ["1", "2", "3", "+"],
                 ["00", "0", ".", "="]

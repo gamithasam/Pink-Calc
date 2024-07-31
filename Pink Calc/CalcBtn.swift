@@ -17,7 +17,7 @@ struct CalcBtn: View {
         case "AC", "C", "B", "%":
             return (colorScheme == .light ? Color(UIColor.systemGray5) : Color(UIColor.systemGray))
             
-        case "/", "*", "-", "+", "=":
+        case "÷", "×", "-", "+", "=":
             let cGreen: Double = 105/255
             let cBlue: Double = 180/255
             return Color(red: 1, green: cGreen, blue: cBlue)
@@ -27,7 +27,7 @@ struct CalcBtn: View {
     }
     
     var fgColor: Color {
-        let operators: Set<Character> = ["/", "*", "-", "+", "="]
+        let operators: Set<Character> = ["÷", "×", "-", "+", "="]
         let topOp: Set<String> = ["AC", "C", "B", "%"]
         
         switch label {
@@ -62,5 +62,5 @@ struct CalcBtn: View {
 }
 
 #Preview {
-    CalcBtn(label: "B", action: {_ in})
+    CalcBtn(label: "÷", action: {_ in})
 }
