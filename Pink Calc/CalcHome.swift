@@ -11,7 +11,8 @@ struct CalcHome: View {
     @State var displayText: String = "0"
     @State var typing: Bool = false
     @State var equalPressed: Bool = false
-    @State var history: [String] = []
+    @State var history: [String : String] = [:]
+    @State var historyMenu: Bool = false
     
     var resultText: String {
         calculate()
@@ -23,6 +24,12 @@ struct CalcHome: View {
                 HStack {
                     Spacer()
                     Image(systemName: "clock.arrow.circlepath")
+                        .onTapGesture {
+                            historyMenu.toggle()
+                        }
+                }
+                .sheet(isPresented: $historyMenu) {
+                    HistoryMenu(history: history)
                 }
                 .padding(.trailing)
                 
@@ -56,7 +63,7 @@ struct CalcHome: View {
             withAnimation {
                 equalPressed = true
             }
-            history.append(resultText) // TODO!! displayText should also be recorded
+            history[displayText] = resultText
         } else {
             if equalPressed {
                 displayText = resultText
