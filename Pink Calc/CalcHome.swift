@@ -29,7 +29,7 @@ struct CalcHome: View {
                         }
                 }
                 .sheet(isPresented: $historyMenu) {
-                    HistoryMenu(history: history)
+                    HistoryMenu(history: history, displayText: $displayText, typing: $typing, equalPressed: $equalPressed, historyMenu: $historyMenu)
                 }
                 .padding(.trailing)
                 
@@ -82,9 +82,16 @@ struct CalcHome: View {
                 displayText = "\(num / 100)"
                 typing = true
             }
-        case "AC", "C":
+        case "C":
             displayText = "0"
             typing = false
+        case "AC":
+            if displayText == "0" {
+                history = [:]
+            } else {
+                displayText = "0"
+                typing = false
+            }
         case "B":
             if displayText.count == 1 {
                 displayText = "0"
