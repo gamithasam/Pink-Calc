@@ -11,7 +11,7 @@ struct CalcHome: View {
     @State var displayText: String = "0"
     @State var typing: Bool = false
     @State var equalPressed: Bool = false
-    @State var history: [String : String] = [:]
+    @State var history: [(String, String)] = []
     @State var historyMenu: Bool = false
     
     var resultText: String {
@@ -63,7 +63,7 @@ struct CalcHome: View {
             withAnimation {
                 equalPressed = true
             }
-            history[displayText] = resultText
+            history.append((displayText, resultText))
         } else {
             if equalPressed {
                 displayText = resultText
@@ -87,7 +87,7 @@ struct CalcHome: View {
             typing = false
         case "AC":
             if displayText == "0" {
-                history = [:]
+                history = []
             } else {
                 displayText = "0"
                 typing = false

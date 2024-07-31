@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct HistoryMenu: View {
-    @State var history: [String : String]
+    @State var history: [(String, String)]
     @Binding var displayText: String
     @Binding var typing: Bool
     @Binding var equalPressed: Bool
@@ -24,10 +24,10 @@ struct HistoryMenu: View {
             Spacer()
             
             List {
-                ForEach(history.keys.sorted(), id: \.self) { key in
+                ForEach(history.reversed(), id: \.0) { (key, value) in
                     VStack(alignment: .leading) {
                         Text(key)
-                        Text("= \(history[key] ?? "Error")")
+                        Text("= \(value)")
                             .foregroundColor(.secondary)
                             .font(.subheadline)
                     }
@@ -43,7 +43,7 @@ struct HistoryMenu: View {
             Spacer()
             
             Button(action: {
-                history = [:]
+                history = []
             }) {
                 Text("Clear History")
             }
