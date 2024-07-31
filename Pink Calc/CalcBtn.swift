@@ -15,10 +15,6 @@ struct CalcBtn: View {
     var bgColor: Color {
         switch label {
         case "AC", "C", "B", "%":
-            let cRed: Double = 120/255
-            let cGreen: Double = cRed
-            let cBlue: Double = 128/255
-//            return Color(red: cRed, green: cGreen, blue: cBlue, opacity: 0.2)
             return (colorScheme == .light ? Color(UIColor.systemGray5) : Color(UIColor.systemGray))
             
         case "/", "*", "-", "+", "=":
@@ -26,10 +22,6 @@ struct CalcBtn: View {
             let cBlue: Double = 180/255
             return Color(red: 1, green: cGreen, blue: cBlue)
         default:
-            let cRed: Double = 120/255
-            let cGreen: Double = cRed
-            let cBlue: Double = 128/255
-//            return Color(red: cRed, green: cGreen, blue: cBlue, opacity: 0.08)
             return Color(UIColor.systemGray6)
         }
     }
@@ -37,11 +29,6 @@ struct CalcBtn: View {
     var fgColor: Color {
         let operators: Set<Character> = ["/", "*", "-", "+", "="]
         let topOp: Set<String> = ["AC", "C", "B", "%"]
-//        if operators.contains(label) {
-//            return .white
-//        } else {
-//            return .primary
-//        }
         
         switch label {
         case _ where operators.contains(label):

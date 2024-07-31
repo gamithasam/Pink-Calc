@@ -10,16 +10,31 @@ import SwiftUI
 struct CalcHome: View {
     @State var displayText: String = "0"
     @State var typing: Bool = false
+    @State var equalPressed: Bool = false
+    
+    
+    var resultText: String {
+        calculate()
+    }
     
     var body: some View {
         GeometryReader { geometry in
             VStack {
                 Spacer()
                 
-                HStack {
-                    Spacer()
-                    Text(displayText)
-                        .font(.system(size: 90))
+                VStack {
+                    HStack {
+                        Spacer()
+                        Text(displayText)
+                            .font(equalPressed ? .system(size: 45) : .system(size: 90))
+                            .animation(.easeInOut, value: equalPressed)
+                    }
+                    HStack {
+                        Spacer()
+                        Text("= " + resultText)
+                            .font(equalPressed ? .system(size: 90) : .system(size: 45))
+                            .animation(.easeInOut, value: equalPressed)
+                    }
                 }
                 .padding()
                 
@@ -31,6 +46,16 @@ struct CalcHome: View {
     }
     
     func pressKey(label: String) {
+        if label == "=" {
+            withAnimation {
+                equalPressed = true
+            }
+        } else {
+            withAnimation {
+                equalPressed = false
+            }
+        }
+        
         switch label {
         case "+", "-", "*", "/":
             displayText += label
@@ -44,16 +69,10 @@ struct CalcHome: View {
             displayText = "0"
             typing = false
         case "B":
-            displayText = String(displayText.dropLast())
-        case "=":
-            let expression = NSExpression(format: displayText)
-            if let result = expression.expressionValue(with: nil, context: nil) as? Double {
-                if result.truncatingRemainder(dividingBy: 1) == 0 {
-                    displayText = "\(Int(result))"
-                } else {
-                    displayText = "\(result)"
-                }
+            if typing {
+                displayText = String(displayText.dropLast())
             }
+        case "=":
             typing = false
         default:
             if displayText != "0" {
@@ -61,6 +80,30 @@ struct CalcHome: View {
             } else {
                 displayText = label
                 typing = true
+            }
+        }
+    }
+    
+    func calculate() -> String {
+        // Handle zero division
+        if displayText.contains("/0") {
+            return "Can't divide by zero"
+        } else {
+            // Handle invalid expressions
+            var validExpression = displayText
+            if let lastChar = validExpression.last, "+-*/".contains(lastChar) {
+                validExpression.removeLast()
+            }
+            let expression = NSExpression(format: validExpression)
+            if let result = expression.expressionValue(with: nil, context: nil) as? Double {
+                // Display int as int
+                if result.truncatingRemainder(dividingBy: 1) == 0 {
+                    return "\(Int(result))"
+                } else {
+                    return "\(result)"
+                }
+            } else {
+                return "Error"
             }
         }
     }
