@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Foundation
 
 struct CalcHome: View {
     @State var displayText: String = "0"
@@ -13,6 +14,7 @@ struct CalcHome: View {
     @State var equalPressed: Bool = false
     @State var history: [(String, String)] = []
     @State var historyMenu: Bool = false
+    @State private var selectedPart: String? = nil
     
     var resultText: String {
         calculate()
@@ -38,9 +40,22 @@ struct CalcHome: View {
                 VStack {
                     HStack {
                         Spacer()
-                        Text(displayText)
-                            .font(equalPressed ? .system(size: 45) : .system(size: 90))
-                            .animation(.easeInOut, value: equalPressed)
+                        ForEach(splitExpression(displayText), id: \.self) { part in
+                            DisplayText(
+                                isSelected: Binding (
+                                    get: { self.selectedPart == part },
+                                    set: { isSelected in
+                                        if isSelected {
+                                            self.selectedPart = part
+                                        } else {
+                                            self.selectedPart = nil
+                                        }
+                                    }
+                                ),
+                                part: part,
+                                equalPressed: $equalPressed
+                            )
+                        }
                     }
                     HStack {
                         Spacer()
@@ -136,6 +151,16 @@ struct CalcHome: View {
                 return "Error"
             }
         }
+    }
+    
+    func splitExpression(_ expression: String) -> [String] {
+        let regex = try! NSRegularExpression(pattern: "\\d+|[+\\-*/]")
+        let matches = regex.matches(in: expression, range: NSRange(expression.startIndex..., in: expression))
+        let numbers = matches.map { match -> String in
+            let range = Range(match.range, in: expression)!
+            return String(expression[range])
+        }
+        return numbers
     }
 }
 
