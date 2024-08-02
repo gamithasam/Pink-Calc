@@ -100,6 +100,7 @@ struct CalcHome: View {
         case "C":
             displayText = "0"
             typing = false
+            selectedPart = nil
         case "AC":
             if displayText == "0" {
                 history = []
@@ -154,7 +155,7 @@ struct CalcHome: View {
     }
     
     func splitExpression(_ expression: String) -> [String] {
-        let regex = try! NSRegularExpression(pattern: "\\d+|[+\\-*/]")
+        let regex = try! NSRegularExpression(pattern: "\\d+|[+\\-×÷]")
         let matches = regex.matches(in: expression, range: NSRange(expression.startIndex..., in: expression))
         let numbers = matches.map { match -> String in
             let range = Range(match.range, in: expression)!
