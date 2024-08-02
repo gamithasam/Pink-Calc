@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		0D1BD3882C5A9C2500241511 /* HistoryMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D1BD3872C5A9C2500241511 /* HistoryMenu.swift */; };
-		0D1BD38A2C5B2C4500241511 /* DisplayText.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D1BD3892C5B2C4500241511 /* DisplayText.swift */; };
+		0D1BD38C2C5CF5C600241511 /* DisplayTextPart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D1BD38B2C5CF5C600241511 /* DisplayTextPart.swift */; };
 		0D8DE6552C56E231001900DA /* Pink_CalcApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D8DE6542C56E231001900DA /* Pink_CalcApp.swift */; };
 		0D8DE6572C56E231001900DA /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D8DE6562C56E231001900DA /* ContentView.swift */; };
 		0D8DE6592C56E232001900DA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0D8DE6582C56E232001900DA /* Assets.xcassets */; };
@@ -20,7 +20,7 @@
 
 /* Begin PBXFileReference section */
 		0D1BD3872C5A9C2500241511 /* HistoryMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryMenu.swift; sourceTree = "<group>"; };
-		0D1BD3892C5B2C4500241511 /* DisplayText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplayText.swift; sourceTree = "<group>"; };
+		0D1BD38B2C5CF5C600241511 /* DisplayTextPart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplayTextPart.swift; sourceTree = "<group>"; };
 		0D8DE6512C56E231001900DA /* Pink Calc.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Pink Calc.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		0D8DE6542C56E231001900DA /* Pink_CalcApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Pink_CalcApp.swift; sourceTree = "<group>"; };
 		0D8DE6562C56E231001900DA /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -45,7 +45,6 @@
 		0D8DE6482C56E231001900DA = {
 			isa = PBXGroup;
 			children = (
-				0D1BD3892C5B2C4500241511 /* DisplayText.swift */,
 				0D8DE6532C56E231001900DA /* Pink Calc */,
 				0D8DE6522C56E231001900DA /* Products */,
 			);
@@ -62,6 +61,7 @@
 		0D8DE6532C56E231001900DA /* Pink Calc */ = {
 			isa = PBXGroup;
 			children = (
+				0D1BD38B2C5CF5C600241511 /* DisplayTextPart.swift */,
 				0D1BD3872C5A9C2500241511 /* HistoryMenu.swift */,
 				0D8DE6542C56E231001900DA /* Pink_CalcApp.swift */,
 				0D8DE6562C56E231001900DA /* ContentView.swift */,
@@ -154,7 +154,7 @@
 			files = (
 				0D8DE6692C56EB11001900DA /* BtnLayout.swift in Sources */,
 				0D8DE6572C56E231001900DA /* ContentView.swift in Sources */,
-				0D1BD38A2C5B2C4500241511 /* DisplayText.swift in Sources */,
+				0D1BD38C2C5CF5C600241511 /* DisplayTextPart.swift in Sources */,
 				0D8DE6672C56E3CD001900DA /* CalcBtn.swift in Sources */,
 				0D8DE6552C56E231001900DA /* Pink_CalcApp.swift in Sources */,
 				0D8DE66B2C56F129001900DA /* CalcHome.swift in Sources */,

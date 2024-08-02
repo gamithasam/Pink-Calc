@@ -14,7 +14,7 @@ struct CalcHome: View {
     @State var equalPressed: Bool = false
     @State var history: [(String, String)] = []
     @State var historyMenu: Bool = false
-    @State private var selectedPart: String? = nil
+    @State private var selectedPart: (Int, String)? = nil
     @State private var editingPart: String = ""
     
     var resultText: String {
@@ -41,13 +41,13 @@ struct CalcHome: View {
                 VStack {
                     HStack {
                         Spacer()
-                        ForEach(splitExpression(displayText), id: \.self) { part in
-                            DisplayText(
+                        ForEach(splitExpression(displayText), id: \.0) { index, part in
+                            DisplayTextPart(
                                 isSelected: Binding (
-                                    get: { self.selectedPart == part },
+                                    get: { self.selectedPart?.0 == index },
                                     set: { isSelected in
                                         if isSelected {
-                                            self.selectedPart = part
+                                            self.selectedPart = (index, part)
                                             self.editingPart = ""
                                         } else {
                                             self.selectedPart = nil
@@ -97,8 +97,8 @@ struct CalcHome: View {
                 if selectedPart == nil {
                     displayText += label
                 } else {
-                    displayText = displayText.replacingOccurrences(of: selectedPart!, with: label, options: .literal, range: displayText.range(of: selectedPart!))
-                    selectedPart = label
+                    displayText = displayText.replacingOccurrences(of: selectedPart!.1, with: label, options: .literal, range: displayText.range(of: selectedPart!.1))
+                    selectedPart!.1 = label
                 }
                 typing = true
             }
@@ -132,13 +132,13 @@ struct CalcHome: View {
                     displayText += label
                 } else {
                     if editingPart.isEmpty {
-                        displayText = displayText.replacingOccurrences(of: selectedPart!, with: label, options: .literal, range: displayText.range(of: selectedPart!))
-                        selectedPart = label
+                        displayText = displayText.replacingOccurrences(of: selectedPart!.1, with: label, options: .literal, range: displayText.range(of: selectedPart!.1))
+                        selectedPart!.1 = label
                         editingPart = label
                     } else {
                         editingPart += label
-                        displayText = displayText.replacingOccurrences(of: selectedPart!, with: editingPart, options: .literal, range: displayText.range(of: selectedPart!))
-                        selectedPart = editingPart
+                        displayText = displayText.replacingOccurrences(of: selectedPart!.1, with: editingPart, options: .literal, range: displayText.range(of: selectedPart!.1))
+                        selectedPart!.1 = editingPart
                     }
                 }
             } else {
@@ -176,12 +176,12 @@ struct CalcHome: View {
         }
     }
     
-    func splitExpression(_ expression: String) -> [String] {
+    func splitExpression(_ expression: String) -> [(Int, String)] {
         let regex = try! NSRegularExpression(pattern: "\\d+|[+\\-×÷]")
         let matches = regex.matches(in: expression, range: NSRange(expression.startIndex..., in: expression))
-        let numbers = matches.map { match -> String in
+        let numbers = matches.enumerated().map { (index, match) -> (Int, String) in
             let range = Range(match.range, in: expression)!
-            return String(expression[range])
+            return (index, String(expression[range]))
         }
         return numbers
     }

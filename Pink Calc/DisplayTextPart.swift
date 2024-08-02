@@ -1,13 +1,13 @@
 //
-//  DisplayText.swift
+//  DisplayTextPart.swift
 //  Pink Calc
 //
-//  Created by Gamitha Samarasingha on 2024-08-01.
+//  Created by Gamitha Samarasingha on 2024-08-02.
 //
 
 import SwiftUI
 
-struct DisplayText: View {
+struct DisplayTextPart: View {
     @Binding var isSelected: Bool
     let part: String
     @Binding var equalPressed: Bool
@@ -32,5 +32,5 @@ struct DisplayText: View {
 }
 
 //#Preview {
-//    DisplayText(part: "250", equalPressed: )
+//    DisplayTextPart(part: "250", equalPressed: )
 //}
