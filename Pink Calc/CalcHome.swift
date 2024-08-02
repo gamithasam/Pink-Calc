@@ -93,13 +93,15 @@ struct CalcHome: View {
         
         switch label {
         case "+", "-", "×", "÷":
-            if selectedPart == nil {
-                displayText += label
-            } else {
-                displayText = displayText.replacingOccurrences(of: selectedPart!, with: label, options: .literal, range: displayText.range(of: selectedPart!))
-                selectedPart = label
+            if !(displayText.last.map { "+-×÷".contains($0) } ?? false) {
+                if selectedPart == nil {
+                    displayText += label
+                } else {
+                    displayText = displayText.replacingOccurrences(of: selectedPart!, with: label, options: .literal, range: displayText.range(of: selectedPart!))
+                    selectedPart = label
+                }
+                typing = true
             }
-            typing = true
         case "%":
             if let num = Double(displayText) {
                 displayText = "\(num / 100)"
@@ -148,7 +150,7 @@ struct CalcHome: View {
     
     func calculate() -> String {
         // Handle zero division
-        if displayText.contains("/0") {
+        if displayText.contains("÷0") {
             return "Can't divide by zero"
         } else {
             // Handle expressions with operators at last
