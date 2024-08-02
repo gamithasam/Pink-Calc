@@ -90,7 +90,11 @@ struct CalcHome: View {
         
         switch label {
         case "+", "-", "×", "÷":
-            displayText += label
+            if selectedPart == nil {
+                displayText += label
+            } else {
+                displayText = displayText.replacingOccurrences(of: selectedPart!, with: label)
+            }
             typing = true
         case "%":
             if let num = Double(displayText) {
@@ -118,7 +122,11 @@ struct CalcHome: View {
             typing = false
         default:
             if displayText != "0" {
-                displayText += label
+                if selectedPart == nil {
+                    displayText += label
+                } else {
+                    displayText = displayText.replacingOccurrences(of: selectedPart!, with: label)
+                }
             } else {
                 displayText = label
                 typing = true
