@@ -15,6 +15,7 @@ struct CalcHome: View {
     @State var history: [(String, String)] = []
     @State var historyMenu: Bool = false
     @State private var selectedPart: String? = nil
+    @State private var editingPart: String = ""
     
     var resultText: String {
         calculate()
@@ -47,8 +48,10 @@ struct CalcHome: View {
                                     set: { isSelected in
                                         if isSelected {
                                             self.selectedPart = part
+                                            self.editingPart = ""
                                         } else {
                                             self.selectedPart = nil
+                                            self.editingPart = ""
                                         }
                                     }
                                 ),
@@ -93,7 +96,8 @@ struct CalcHome: View {
             if selectedPart == nil {
                 displayText += label
             } else {
-                displayText = displayText.replacingOccurrences(of: selectedPart!, with: label)
+                displayText = displayText.replacingOccurrences(of: selectedPart!, with: label, options: .literal, range: displayText.range(of: selectedPart!))
+                selectedPart = label
             }
             typing = true
         case "%":
@@ -125,7 +129,15 @@ struct CalcHome: View {
                 if selectedPart == nil {
                     displayText += label
                 } else {
-                    displayText = displayText.replacingOccurrences(of: selectedPart!, with: label)
+                    if editingPart.isEmpty {
+                        displayText = displayText.replacingOccurrences(of: selectedPart!, with: label, options: .literal, range: displayText.range(of: selectedPart!))
+                        selectedPart = label
+                        editingPart = label
+                    } else {
+                        editingPart += label
+                        displayText = displayText.replacingOccurrences(of: selectedPart!, with: editingPart, options: .literal, range: displayText.range(of: selectedPart!))
+                        selectedPart = editingPart
+                    }
                 }
             } else {
                 displayText = label
