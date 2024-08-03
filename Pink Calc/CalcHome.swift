@@ -61,6 +61,7 @@ struct CalcHome: View {
                                 part: part,
                                 equalPressed: $equalPressed
                             )
+                            .textSelection(.enabled)
                         }
                     }
                     HStack {
@@ -68,6 +69,7 @@ struct CalcHome: View {
                         Text("= " + resultText)
                             .font(equalPressed ? .system(size: 90) : .system(size: 45))
                             .animation(.easeInOut, value: equalPressed)
+                            .textSelection(.enabled)
                     }
                 }
                 .padding()
@@ -117,11 +119,19 @@ struct CalcHome: View {
         case "B":
             if displayText.count == 1 {
                 displayText = "0"
-            } else if typing {
+            } else if selectedPart != nil {
                 displayText = displayText.replacingOccurrences(of: selectedPart!.1, with: String(selectedPart!.1.dropLast()), options: .literal, range: displayText.range(of: selectedPart!.1))
+            } else if typing {
+                displayText.removeLast()
             }
         case "=":
             typing = false
+        case ".":
+            if (displayText.last.map { "+-×÷".contains($0) } ?? false) {
+                displayText += "0\(label)"
+            } else {
+                displayText += label
+            }
         default:
             if displayText != "0" {
                 if selectedPart == nil {
@@ -161,7 +171,7 @@ struct CalcHome: View {
             var validExpression = displayText
                 .replacingOccurrences(of: "×", with: "*")
                 .replacingOccurrences(of: "÷", with: "/")
-            if let lastChar = validExpression.last, "+-*/".contains(lastChar) {
+            if let lastChar = validExpression.last, "+-*/.".contains(lastChar) {
                 validExpression.removeLast()
             }
             // Convert expression to NSExpression
@@ -181,7 +191,7 @@ struct CalcHome: View {
     }
     
     func splitExpression(_ expression: String) -> [(Int, String)] {
-        let regex = try! NSRegularExpression(pattern: "\\d+|[+\\-×÷]")
+        let regex = try! NSRegularExpression(pattern: "\\d+|[+\\-×÷.]")
         let matches = regex.matches(in: expression, range: NSRange(expression.startIndex..., in: expression))
         let numbers = matches.enumerated().map { (index, match) -> (Int, String) in
             let range = Range(match.range, in: expression)!
