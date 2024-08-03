@@ -16,6 +16,7 @@ struct CalcHome: View {
     @State var historyMenu: Bool = false
     @State private var selectedPart: (Int, String)? = nil
     @State private var editingPart: String = ""
+    @State var editingMode: Bool = false
     
     var resultText: String {
         calculate()
@@ -49,9 +50,11 @@ struct CalcHome: View {
                                         if isSelected {
                                             self.selectedPart = (index, part)
                                             self.editingPart = ""
+                                            self.editingMode = true
                                         } else {
                                             self.selectedPart = nil
                                             self.editingPart = ""
+                                            self.editingMode = false
                                         }
                                     }
                                 ),
@@ -69,7 +72,7 @@ struct CalcHome: View {
                 }
                 .padding()
                 
-                BtnLayout(action: pressKey, longAction: longPressKey)
+                BtnLayout(action: pressKey, longAction: longPressKey, editingMode: $editingMode)
                     .frame(width: geometry.size.width, height: geometry.size.height * 0.6)
                 .edgesIgnoringSafeArea(.all)
             }
@@ -107,17 +110,10 @@ struct CalcHome: View {
                 displayText = "\(num / 100)"
                 typing = true
             }
-        case "C":
-            displayText = "0"
-            typing = false
+        case "T":
             selectedPart = nil
-        case "AC":
-            if displayText == "0" {
-                history = []
-            } else {
-                displayText = "0"
-                typing = false
-            }
+            editingPart = ""
+            editingMode = false
         case "B":
             if displayText.count == 1 {
                 displayText = "0"

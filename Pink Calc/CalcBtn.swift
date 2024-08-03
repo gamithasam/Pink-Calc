@@ -13,14 +13,13 @@ struct CalcBtn: View {
     let longAction: (String) -> Void
     @Environment(\.colorScheme) var colorScheme
     
-    let operators: Set<Character> = ["÷", "×", "-", "+", "="]
+    let operators: Set<Character> = ["÷", "×", "-", "+", "=", "T"]
     let topOp: Set<String> = ["(", ")", "B"]
     
     var bgColor: Color {
         switch label {
         case _ where topOp.contains(label):
             return (colorScheme == .light ? Color(UIColor.systemGray5) : Color(UIColor.systemGray))
-            
         case _ where operators.contains(label):
             let cGreen: Double = 105/255
             let cBlue: Double = 180/255
@@ -31,8 +30,6 @@ struct CalcBtn: View {
     }
     
     var fgColor: Color {
-        
-        
         switch label {
         case _ where operators.contains(label):
             return .white
@@ -51,6 +48,13 @@ struct CalcBtn: View {
                     .frame(width: 79, height: 79)
                     .foregroundColor(fgColor)
                     .background(bgColor)
+                    .cornerRadius(100)
+            } else if label == "T" {
+                Image(systemName: "checkmark")
+                    .font(.system(size: 25))
+                    .frame(width: 79, height: 79)
+                    .foregroundColor(bgColor)
+                    .background(fgColor)
                     .cornerRadius(100)
             } else {
                 Text(label)

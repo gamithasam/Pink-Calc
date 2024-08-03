@@ -10,6 +10,11 @@ import SwiftUI
 struct BtnLayout: View {
     let action: (String) -> Void
     let longAction: (String) -> Void
+    @Binding var editingMode: Bool
+    
+    var equalText: String {
+        return editingMode ? "T" : "="
+    }
     
     var body: some View {
         let labels = [
@@ -17,7 +22,7 @@ struct BtnLayout: View {
                 ["7", "8", "9", "×"],
                 ["4", "5", "6", "-"],
                 ["1", "2", "3", "+"],
-                ["00", "0", ".", "="]
+                ["00", "0", ".", equalText]
             ]
         
         GeometryReader { geometry in
@@ -40,6 +45,6 @@ struct BtnLayout: View {
     }
 }
 
-#Preview {
-    BtnLayout(action: { _ in }, longAction: { _ in})
-}
+//#Preview {
+//    BtnLayout(action: { _ in }, longAction: { _ in}, selectedPart: .constant(nil))
+//}
