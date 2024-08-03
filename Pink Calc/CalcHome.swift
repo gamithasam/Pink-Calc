@@ -118,7 +118,7 @@ struct CalcHome: View {
             if displayText.count == 1 {
                 displayText = "0"
             } else if typing {
-                displayText = String(displayText.dropLast())
+                displayText = displayText.replacingOccurrences(of: selectedPart!.1, with: String(selectedPart!.1.dropLast()), options: .literal, range: displayText.range(of: selectedPart!.1))
             }
         case "=":
             typing = false
