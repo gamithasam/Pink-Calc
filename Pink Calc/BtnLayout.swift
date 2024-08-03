@@ -22,7 +22,7 @@ struct BtnLayout: View {
                 ["7", "8", "9", "×"],
                 ["4", "5", "6", "-"],
                 ["1", "2", "3", "+"],
-                ["00", "0", ".", equalText]
+                ["S", "0", ".", equalText]
             ]
         
         GeometryReader { geometry in

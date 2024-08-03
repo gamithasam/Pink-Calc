@@ -132,6 +132,8 @@ struct CalcHome: View {
             } else {
                 displayText += label
             }
+        case "S":
+            print("Yo")
         default:
             if displayText != "0" {
                 if selectedPart == nil {
