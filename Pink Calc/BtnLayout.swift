@@ -9,11 +9,11 @@ import SwiftUI
 
 struct BtnLayout: View {
     let action: (String) -> Void
-    let clearLabel: String
+    let longAction: (String) -> Void
     
     var body: some View {
         let labels = [
-            [clearLabel, "B", "%", "÷"],
+            ["B", "(", ")", "÷"],
                 ["7", "8", "9", "×"],
                 ["4", "5", "6", "-"],
                 ["1", "2", "3", "+"],
@@ -29,7 +29,7 @@ struct BtnLayout: View {
                     HStack(spacing: horizontalSpacing) {
                         ForEach(0..<labels[0].count, id: \.self) { column in
                             let label = labels[row][column]
-                            CalcBtn(label: label, action: action)
+                            CalcBtn(label: label, action: action, longAction: longAction)
                         }
                     }
                     .padding(.leading, horizontalSpacing)
@@ -41,5 +41,5 @@ struct BtnLayout: View {
 }
 
 #Preview {
-    BtnLayout(action: { _ in }, clearLabel: "AC")
+    BtnLayout(action: { _ in }, longAction: { _ in})
 }

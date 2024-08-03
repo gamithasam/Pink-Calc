@@ -69,7 +69,7 @@ struct CalcHome: View {
                 }
                 .padding()
                 
-                BtnLayout(action: pressKey, clearLabel: typing ? "C" : "AC")
+                BtnLayout(action: pressKey, longAction: longPressKey)
                     .frame(width: geometry.size.width, height: geometry.size.height * 0.6)
                 .edgesIgnoringSafeArea(.all)
             }
@@ -145,6 +145,14 @@ struct CalcHome: View {
                 displayText = label
                 typing = true
             }
+        }
+    }
+    
+    func longPressKey(label: String) {
+        if label == "B" {
+            displayText = "0"
+            typing = false
+            selectedPart = nil
         }
     }
     

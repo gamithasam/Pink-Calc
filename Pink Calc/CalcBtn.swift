@@ -10,14 +10,18 @@ import SwiftUI
 struct CalcBtn: View {
     let label: String
     let action: (String) -> Void
+    let longAction: (String) -> Void
     @Environment(\.colorScheme) var colorScheme
+    
+    let operators: Set<Character> = ["÷", "×", "-", "+", "="]
+    let topOp: Set<String> = ["(", ")", "B"]
     
     var bgColor: Color {
         switch label {
-        case "AC", "C", "B", "%":
+        case _ where topOp.contains(label):
             return (colorScheme == .light ? Color(UIColor.systemGray5) : Color(UIColor.systemGray))
             
-        case "÷", "×", "-", "+", "=":
+        case _ where operators.contains(label):
             let cGreen: Double = 105/255
             let cBlue: Double = 180/255
             return Color(red: 1, green: cGreen, blue: cBlue)
@@ -27,8 +31,7 @@ struct CalcBtn: View {
     }
     
     var fgColor: Color {
-        let operators: Set<Character> = ["÷", "×", "-", "+", "="]
-        let topOp: Set<String> = ["AC", "C", "B", "%"]
+        
         
         switch label {
         case _ where operators.contains(label):
@@ -58,9 +61,15 @@ struct CalcBtn: View {
                     .cornerRadius(100)
             }
         }
+        .simultaneousGesture(
+            LongPressGesture(minimumDuration: 1)
+                .onEnded { _ in
+                    longAction(label)
+                }
+        )
     }
 }
 
 #Preview {
-    CalcBtn(label: "÷", action: {_ in})
+    CalcBtn(label: "÷", action: {_ in}, longAction: {_ in})
 }
