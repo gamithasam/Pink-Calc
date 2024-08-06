@@ -106,6 +106,9 @@ struct CalcHome: View {
                     selectedPart!.1 = label
                 }
                 typing = true
+            } else if !displayText.isEmpty {
+                displayText.removeLast()
+                displayText.append(label)
             }
         case "%":
             if let num = Double(displayText) {
