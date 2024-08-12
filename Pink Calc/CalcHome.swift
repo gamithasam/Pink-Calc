@@ -137,6 +137,21 @@ struct CalcHome: View {
             }
         case "S":
             print("Yo")
+        case "(":
+            let label = "*" + label
+            if selectedPart == nil {
+                displayText += label
+            } else {
+                if editingPart.isEmpty {
+                    displayText = displayText.replacingOccurrences(of: selectedPart!.1, with: label, options: .literal, range: displayText.range(of: selectedPart!.1))
+                    selectedPart!.1 = label
+                    editingPart = label
+                } else {
+                    editingPart += label
+                    displayText = displayText.replacingOccurrences(of: selectedPart!.1, with: editingPart, options: .literal, range: displayText.range(of: selectedPart!.1))
+                    selectedPart!.1 = editingPart
+                }
+            }
         default:
             if displayText != "0" {
                 if selectedPart == nil {
@@ -178,7 +193,35 @@ struct CalcHome: View {
                 .replacingOccurrences(of: "÷", with: "/")
             if let lastChar = validExpression.last, "+-*/.".contains(lastChar) {
                 validExpression.removeLast()
+            } else if let lastChar = validExpression.last, "(".contains(lastChar) {
+                validExpression.removeLast()
+                validExpression.removeLast()
             }
+            
+            // Remove extra closing parantheses
+            var paraBalancedExpression = ""
+            var openCount = 0
+            for char in validExpression {
+                if char == "(" {
+                    openCount += 1
+                    paraBalancedExpression.append(char)
+                } else if char == ")" {
+                    if openCount > 0 {
+                        openCount -= 1
+                        paraBalancedExpression.append(char)
+                    }
+                } else {
+                    paraBalancedExpression.append(char)
+                }
+            }
+            validExpression = paraBalancedExpression
+            print(validExpression)
+            // Auto complete open parantheses
+            let openParaCount = validExpression.filter { $0 == "(" }.count
+            let closeParaCount = validExpression.filter { $0 == ")" }.count
+            validExpression.append(String(repeating: ")", count: openParaCount-closeParaCount))
+            
+            
             // Convert expression to NSExpression
             let expression = NSExpression(format: validExpression)
             // Handle invalid NSExpressions
@@ -196,7 +239,7 @@ struct CalcHome: View {
     }
     
     func splitExpression(_ expression: String) -> [(Int, String)] {
-        let regex = try! NSRegularExpression(pattern: "\\d+|[+\\-×÷.]")
+        let regex = try! NSRegularExpression(pattern: "\\d+|[+\\-×÷.]|[()]")
         let matches = regex.matches(in: expression, range: NSRange(expression.startIndex..., in: expression))
         let numbers = matches.enumerated().map { (index, match) -> (Int, String) in
             let range = Range(match.range, in: expression)!
