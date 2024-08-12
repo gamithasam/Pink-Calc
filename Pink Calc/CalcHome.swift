@@ -40,30 +40,34 @@ struct CalcHome: View {
                 Spacer()
                 
                 VStack {
-                    HStack {
-                        Spacer()
-                        ForEach(splitExpression(displayText), id: \.0) { index, part in
-                            DisplayTextPart(
-                                isSelected: Binding (
-                                    get: { self.selectedPart?.0 == index },
-                                    set: { isSelected in
-                                        if isSelected {
-                                            self.selectedPart = (index, part)
-                                            self.editingPart = ""
-                                            self.editingMode = true
-                                        } else {
-                                            self.selectedPart = nil
-                                            self.editingPart = ""
-                                            self.editingMode = false
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack {
+                            ForEach(splitExpression(displayText), id: \.0) { index, part in
+                                DisplayTextPart(
+                                    isSelected: Binding (
+                                        get: { self.selectedPart?.0 == index },
+                                        set: { isSelected in
+                                            if isSelected {
+                                                self.selectedPart = (index, part)
+                                                self.editingPart = ""
+                                                self.editingMode = true
+                                            } else {
+                                                self.selectedPart = nil
+                                                self.editingPart = ""
+                                                self.editingMode = false
+                                            }
                                         }
-                                    }
-                                ),
-                                part: part,
-                                equalPressed: $equalPressed
-                            )
-                            .textSelection(.enabled)
+                                    ),
+                                    part: part,
+                                    equalPressed: $equalPressed
+                                )
+                                .textSelection(.enabled)
+                            }
+                            
                         }
+                        .environment(\.layoutDirection, .leftToRight)
                     }
+                    .environment(\.layoutDirection, .rightToLeft)
                     HStack {
                         Spacer()
                         Text("= " + resultText)
