@@ -102,7 +102,7 @@ struct CalcHome: View {
         
         switch label {
         case "+", "-", "×", "÷":
-            if !(displayText.last.map { "+-×÷".contains($0) } ?? false) {
+            if !(displayText.last.map { "+-×÷.".contains($0) } ?? false) {
                 if selectedPart == nil {
                     displayText += label
                 } else {
@@ -134,11 +134,13 @@ struct CalcHome: View {
         case "=":
             typing = false
         case ".":
+            print("Display First \(displayText)")
             if (displayText.last.map { "+-×÷".contains($0) } ?? false) {
                 displayText += "0\(label)"
-            } else {
+            } else if !(displayText.last.map { $0 == "." } ?? false) {
                 displayText += label
             }
+            print("Display Last \(displayText)")
         case "S":
             print("Yo")
         case "(":
