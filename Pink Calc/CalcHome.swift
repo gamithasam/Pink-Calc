@@ -142,7 +142,6 @@ struct CalcHome: View {
         case "S":
             print("Yo")
         case "(":
-            let label = "*" + label
             if selectedPart == nil {
                 displayText += label
             } else {
@@ -195,12 +194,24 @@ struct CalcHome: View {
             var validExpression = displayText
                 .replacingOccurrences(of: "×", with: "*")
                 .replacingOccurrences(of: "÷", with: "/")
-            if let lastChar = validExpression.last, "+-*/.".contains(lastChar) {
-                validExpression.removeLast()
-            } else if let lastChar = validExpression.last, "(".contains(lastChar) {
-                validExpression.removeLast()
-                validExpression.removeLast()
+            if let lastChar = validExpression.last {
+                if "+-*/.".contains(lastChar) {
+                    // Remove the last character if it's an operator or a period
+                    validExpression.removeLast()
+                } else if lastChar == "(" {
+                    // Remove the last character if it's an open paranthesis
+                    validExpression.removeLast()
+                    if let newLastChar = validExpression.last, "+-*/.".contains(newLastChar) {
+                        // Remove the new last character if it's an operator or a period
+                        validExpression.removeLast()
+                    }
+                }
             }
+            
+            // Replace ( with *( where appropriate
+            let paraRegex = try! NSRegularExpression(pattern: "(?<=\\d)\\(", options: [])
+            let paraRange = NSRange(location: 0, length: validExpression.utf16.count)
+            validExpression = paraRegex.stringByReplacingMatches(in: validExpression, options: [], range: paraRange, withTemplate: "*(")
             
             // Remove extra closing parantheses
             var paraBalancedExpression = ""
