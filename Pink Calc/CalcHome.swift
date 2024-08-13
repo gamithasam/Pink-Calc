@@ -134,13 +134,19 @@ struct CalcHome: View {
         case "=":
             typing = false
         case ".":
-            print("Display First \(displayText)")
-            if (displayText.last.map { "+-×÷".contains($0) } ?? false) {
-                displayText += "0\(label)"
-            } else if !(displayText.last.map { $0 == "." } ?? false) {
-                displayText += label
+            if selectedPart == nil {
+                let operators: Set<Character> = ["+", "-", "×", "÷"]
+                let components = displayText.split(whereSeparator: { operators.contains($0) })
+                if (displayText.last.map { "+-×÷".contains($0) } ?? false) {
+                    displayText += "0\(label)"
+                } else if !(displayText.last.map { $0 == "." } ?? false) && !components.last!.contains(".") {
+                    displayText += label
+                }
+            } else {
+                editingPart += label
+                displayText = displayText.replacingOccurrences(of: selectedPart!.1, with: editingPart, options: .literal, range: displayText.range(of: selectedPart!.1))
+                selectedPart!.1 = editingPart
             }
-            print("Display Last \(displayText)")
         case "S":
             print("Yo")
         case "(":
