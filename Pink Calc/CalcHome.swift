@@ -16,7 +16,9 @@ struct CalcHome: View {
     @State var historyMenu: Bool = false
     @State private var selectedPart: (Int, String)? = nil
     @State private var editingPart: String = ""
-    @State var editingMode: Bool = false
+    var editingMode: Bool {
+        return selectedPart != nil
+    }
     
     var resultText: String {
         calculate()
@@ -47,14 +49,11 @@ struct CalcHome: View {
                                     isSelected: Binding (
                                         get: { self.selectedPart?.0 == index },
                                         set: { isSelected in
+                                            self.editingPart = ""
                                             if isSelected {
                                                 self.selectedPart = (index, part)
-                                                self.editingPart = ""
-                                                self.editingMode = true
                                             } else {
                                                 self.selectedPart = nil
-                                                self.editingPart = ""
-                                                self.editingMode = false
                                             }
                                         }
                                     ),
@@ -78,7 +77,7 @@ struct CalcHome: View {
                 }
                 .padding()
                 
-                BtnLayout(action: pressKey, longAction: longPressKey, editingMode: $editingMode)
+                BtnLayout(action: pressKey, longAction: longPressKey, editingMode: .constant(editingMode))
                     .frame(width: geometry.size.width, height: geometry.size.height * 0.6)
                 .edgesIgnoringSafeArea(.all)
             }
@@ -103,7 +102,7 @@ struct CalcHome: View {
         switch label {
         case "+", "-", "×", "÷":
             if !(displayText.last.map { "+-×÷.".contains($0) } ?? false) {
-                if selectedPart == nil {
+                if !editingMode {
                     displayText += label
                 } else {
                     displayText = displayText.replacingOccurrences(of: selectedPart!.1, with: label, options: .literal, range: displayText.range(of: selectedPart!.1))
@@ -122,7 +121,6 @@ struct CalcHome: View {
         case "T":
             selectedPart = nil
             editingPart = ""
-            editingMode = false
         case "B":
             if displayText.count == 1 {
                 displayText = "0"
@@ -134,7 +132,7 @@ struct CalcHome: View {
         case "=":
             typing = false
         case ".":
-            if selectedPart == nil {
+            if !editingMode {
                 let operators: Set<Character> = ["+", "-", "×", "÷"]
                 let components = displayText.split(whereSeparator: { operators.contains($0) })
                 if (displayText.last.map { "+-×÷".contains($0) } ?? false) {
@@ -143,14 +141,14 @@ struct CalcHome: View {
                     displayText += label
                 }
             } else {
-                editingPart += label
-                displayText = displayText.replacingOccurrences(of: selectedPart!.1, with: editingPart, options: .literal, range: displayText.range(of: selectedPart!.1))
-                selectedPart!.1 = editingPart
+//                editingPart += label
+                displayText = displayText.replacingOccurrences(of: selectedPart!.1, with: selectedPart!.1+label, options: .literal, range: displayText.range(of: selectedPart!.1))
+//                selectedPart!.1 = editingPart
             }
         case "S":
             print("Yo")
         case "(":
-            if selectedPart == nil {
+            if !editingMode {
                 displayText += label
             } else {
                 if editingPart.isEmpty {
@@ -165,7 +163,7 @@ struct CalcHome: View {
             }
         default:
             if displayText != "0" {
-                if selectedPart == nil {
+                if !editingMode {
                     displayText += label
                 } else {
                     if editingPart.isEmpty {
@@ -262,7 +260,8 @@ struct CalcHome: View {
     }
     
     func splitExpression(_ expression: String) -> [(Int, String)] {
-        let regex = try! NSRegularExpression(pattern: "\\d+|[+\\-×÷.]|[()]")
+        let regex = try! NSRegularExpression(pattern: "\\d+(\\.\\d*)?|[+\\-×÷()]+") // Doesn't split the period symbol
+//        let regex = try! NSRegularExpression(pattern: "\\d+|[+\\-×÷.]|[()]") // Split period symbol too
         let matches = regex.matches(in: expression, range: NSRange(expression.startIndex..., in: expression))
         let numbers = matches.enumerated().map { (index, match) -> (Int, String) in
             let range = Range(match.range, in: expression)!
