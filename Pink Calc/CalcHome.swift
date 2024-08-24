@@ -206,6 +206,9 @@ struct CalcHome: View {
             let paraOpRange = NSRange(location: 0, length: validExpression.utf16.count)
             validExpression = paraOpRegex.stringByReplacingMatches(in: validExpression, options: [], range: paraOpRange, withTemplate: "")
             
+            // Replace () with (1)
+            validExpression = validExpression.replacingOccurrences(of: "()", with: "(1)")
+            
             if let lastChar = validExpression.last {
                 if "+-*/.".contains(lastChar) {
                     // Remove the last character if it's an operator or a period
