@@ -141,9 +141,9 @@ struct CalcHome: View {
                     displayText += label
                 }
             } else {
-//                editingPart += label
                 displayText = displayText.replacingOccurrences(of: selectedPart!.1, with: selectedPart!.1+label, options: .literal, range: displayText.range(of: selectedPart!.1))
-//                selectedPart!.1 = editingPart
+                selectedPart!.1 = selectedPart!.1+label
+                editingPart = selectedPart!.1
             }
         case "S":
             print("Yo")
@@ -242,6 +242,10 @@ struct CalcHome: View {
             let closeParaCount = validExpression.filter { $0 == ")" }.count
             validExpression.append(String(repeating: ")", count: openParaCount-closeParaCount))
             
+            // Remove invalid decimal points
+            let decRegex = try! NSRegularExpression(pattern: "\\.(?=[\\+\\-\\/\\*\\(\\)])", options: [])
+            let decRange = NSRange(location: 0, length: validExpression.utf16.count)
+            validExpression = decRegex.stringByReplacingMatches(in: validExpression, options: [], range: decRange, withTemplate: "")
             
             // Convert expression to NSExpression
             let expression = NSExpression(format: validExpression)
