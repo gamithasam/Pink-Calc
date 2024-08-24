@@ -196,10 +196,16 @@ struct CalcHome: View {
         if displayText.contains("÷0") {
             return "Can't divide by zero"
         } else {
-            // Handle expressions with operators at last
+            // Replace visual symbols with math symbols
             var validExpression = displayText
                 .replacingOccurrences(of: "×", with: "*")
                 .replacingOccurrences(of: "÷", with: "/")
+            
+            // Remove ( just beofre an operator
+            let paraOpRegex = try! NSRegularExpression(pattern: "\\((?=[+\\-*/])", options: [])
+            let paraOpRange = NSRange(location: 0, length: validExpression.utf16.count)
+            validExpression = paraOpRegex.stringByReplacingMatches(in: validExpression, options: [], range: paraOpRange, withTemplate: "")
+            
             if let lastChar = validExpression.last {
                 if "+-*/.".contains(lastChar) {
                     // Remove the last character if it's an operator or a period
@@ -215,9 +221,9 @@ struct CalcHome: View {
             }
             
             // Replace ( with *( where appropriate
-            let paraRegex = try! NSRegularExpression(pattern: "(?<=\\d)\\(", options: [])
-            let paraRange = NSRange(location: 0, length: validExpression.utf16.count)
-            validExpression = paraRegex.stringByReplacingMatches(in: validExpression, options: [], range: paraRange, withTemplate: "*(")
+            let paraMultiRegex = try! NSRegularExpression(pattern: "(?<=\\d)\\(", options: [])
+            let paraMultiRange = NSRange(location: 0, length: validExpression.utf16.count)
+            validExpression = paraMultiRegex.stringByReplacingMatches(in: validExpression, options: [], range: paraMultiRange, withTemplate: "*(")
             
             // Remove extra closing parantheses
             var paraBalancedExpression = ""
@@ -237,6 +243,7 @@ struct CalcHome: View {
             }
             validExpression = paraBalancedExpression
             print(validExpression)
+            
             // Auto complete open parantheses
             let openParaCount = validExpression.filter { $0 == "(" }.count
             let closeParaCount = validExpression.filter { $0 == ")" }.count
