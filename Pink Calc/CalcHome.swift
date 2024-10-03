@@ -133,9 +133,9 @@ struct CalcHome: View {
             typing = false
         case ".":
             if !editingMode {
-                let operators: Set<Character> = ["+", "-", "×", "÷"]
+                let operators: Set<Character> = ["+", "-", "×", "÷", "("]
                 let components = displayText.split(whereSeparator: { operators.contains($0) })
-                if (displayText.last.map { "+-×÷".contains($0) } ?? false) {
+                if (displayText.last.map { operators.contains($0) } ?? false) {
                     displayText += "0\(label)"
                 } else if !(displayText.last.map { $0 == "." } ?? false) && !components.last!.contains(".") {
                     displayText += label
@@ -245,7 +245,6 @@ struct CalcHome: View {
                 }
             }
             validExpression = paraBalancedExpression
-            print(validExpression)
             
             // Auto complete open parantheses
             let openParaCount = validExpression.filter { $0 == "(" }.count
@@ -257,7 +256,25 @@ struct CalcHome: View {
             let decRange = NSRange(location: 0, length: validExpression.utf16.count)
             validExpression = decRegex.stringByReplacingMatches(in: validExpression, options: [], range: decRange, withTemplate: "")
             
+            if let lastChar = validExpression.last {
+                if "+-*/.".contains(lastChar) {
+                    // Remove the last character if it's an operator or a period
+                    validExpression.removeLast()
+                } else if lastChar == "(" {
+                    // Remove the last character if it's an open paranthesis
+                    validExpression.removeLast()
+                    if let newLastChar = validExpression.last, "+-*/.".contains(newLastChar) {
+                        // Remove the new last character if it's an operator or a period
+                        validExpression.removeLast()
+                    }
+                }
+            }
+            
+            // Add 1 after * and before )
+            validExpression = validExpression.replacingOccurrences(of: "*)", with: "*1)")
+            
             // Convert expression to NSExpression
+            print(validExpression)
             let expression = NSExpression(format: validExpression)
             // Handle invalid NSExpressions
             if let result = expression.expressionValue(with: nil, context: nil) as? Double {
