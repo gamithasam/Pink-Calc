@@ -89,6 +89,14 @@ struct CalcHome: View {
         }
     }
     
+    func closeParaReady() -> Bool {
+        if displayText.filter({ $0 == "(" }).count > displayText.filter({ $0 == ")" }).count {
+            return true
+        } else {
+            return false
+        }
+    }
+    
     func pressKey(label: String) {
         if label == "=" {
             withAnimation {
@@ -164,6 +172,22 @@ struct CalcHome: View {
                     editingPart += label
                     displayText = displayText.replacingOccurrences(of: selectedPart!.1, with: editingPart, options: .literal, range: displayText.range(of: selectedPart!.1))
                     selectedPart!.1 = editingPart
+                }
+            }
+        case ")":
+            if closeParaReady() {
+                if !editingMode {
+                    displayText += label
+                } else {
+                    if editingPart.isEmpty {
+                        displayText = displayText.replacingOccurrences(of: selectedPart!.1, with: label, options: .literal, range: displayText.range(of: selectedPart!.1))
+                        selectedPart!.1 = label
+                        editingPart = label
+                    } else {
+                        editingPart += label
+                        displayText = displayText.replacingOccurrences(of: selectedPart!.1, with: editingPart, options: .literal, range: displayText.range(of: selectedPart!.1))
+                        selectedPart!.1 = editingPart
+                    }
                 }
             }
         default:
