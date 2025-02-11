@@ -21,12 +21,22 @@ struct CalcHome: View {
     @State private var selectedPart: (Int, String)? = nil
     @State private var editingPart: String = ""
     @State private var scrollToEnd: Bool = false
+    @State var layoutType: layouts = .standard
     var editingMode: Bool {
         return selectedPart != nil
     }
     
     var resultText: String {
         calculate()
+    }
+    
+    private var btnLayoutHeightRatio: CGFloat {
+        switch layoutType {
+        case .standard:
+            return 0.6
+        case .expanded:
+            return 0.7
+        }
     }
     
     var body: some View {
@@ -82,9 +92,9 @@ struct CalcHome: View {
                 }
                 .padding()
                 
-                BtnLayout(action: pressKey, longAction: longPressKey, editingMode: .constant(editingMode))
-                    .frame(width: geometry.size.width, height: geometry.size.height * 0.6)
-                .edgesIgnoringSafeArea(.all)
+                BtnLayout(action: pressKey, longAction: longPressKey, editingMode: .constant(editingMode), layoutType: $layoutType)
+                    .frame(width: geometry.size.width, height: geometry.size.height * btnLayoutHeightRatio)
+//                .edgesIgnoringSafeArea(.all)
             }
         }
     }
@@ -170,7 +180,7 @@ struct CalcHome: View {
                 editingPart = selectedPart!.1
             }
         case "S":
-            print("Yo")
+            layoutType == .standard ? (layoutType = .expanded) : (layoutType = .standard)
         case "(":
             if !editingMode {
                 displayText += label

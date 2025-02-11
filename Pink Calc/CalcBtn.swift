@@ -11,6 +11,7 @@ struct CalcBtn: View {
     let label: String
     let action: (String) -> Void
     let longAction: (String) -> Void
+    let frameSize: CGFloat
     @Environment(\.colorScheme) var colorScheme
     
     @State private var placeholder: Bool = false //TODO: Change the placeholder
@@ -49,28 +50,28 @@ struct CalcBtn: View {
             if label == "B" {
                 Image(systemName: "delete.backward")
                     .font(.system(size: 35))
-                    .frame(width: 79, height: 79)
+                    .frame(width: frameSize, height: frameSize)
                     .foregroundColor(fgColor)
                     .background(bgColor)
                     .cornerRadius(100)
             } else if label == "T" {
                 Image(systemName: "checkmark")
                     .font(.system(size: 25))
-                    .frame(width: 79, height: 79)
+                    .frame(width: frameSize, height: frameSize)
                     .foregroundColor(bgColor)
                     .background(fgColor)
                     .cornerRadius(100)
             } else if label == "S" {
                 Image(systemName: "arrow.up.backward.and.arrow.down.forward")
                     .font(.system(size: 25))
-                    .frame(width: 79, height: 79)
+                    .frame(width: frameSize, height: frameSize)
                     .foregroundColor(fgColor)
                     .background(bgColor)
                     .cornerRadius(100)
             } else {
                 Text(label)
                     .font(.system(size: 40))
-                    .frame(width: 79, height: 79)
+                    .frame(width: frameSize, height: frameSize)
                     .foregroundColor(fgColor)
                     .background(bgColor)
                     .cornerRadius(100)
@@ -100,5 +101,5 @@ struct CalcBtn: View {
 }
 
 #Preview {
-    CalcBtn(label: "S", action: {_ in}, longAction: {_ in})
+    CalcBtn(label: "S", action: {_ in}, longAction: {_ in}, frameSize: 79)
 }
