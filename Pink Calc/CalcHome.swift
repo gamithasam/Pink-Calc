@@ -97,6 +97,19 @@ struct CalcHome: View {
         }
     }
     
+    func replaceSelectedPart(with label: String, assign: String? = nil) {
+        displayText = displayText.replacingOccurrences(of: selectedPart!.1, with: label, options: .literal, range: displayText.range(of: selectedPart!.1))
+        
+        switch assign {
+        case "none":
+            break
+        case nil:
+            selectedPart!.1 = label
+        default:
+            selectedPart!.1 = assign!
+        }
+    }
+    
     func pressKey(label: String) {
         if label == "=" {
             withAnimation {
@@ -118,8 +131,7 @@ struct CalcHome: View {
                 if !editingMode {
                     displayText += label
                 } else {
-                    displayText = displayText.replacingOccurrences(of: selectedPart!.1, with: label, options: .literal, range: displayText.range(of: selectedPart!.1))
-                    selectedPart!.1 = label
+                    replaceSelectedPart(with: label)
                 }
                 typing = true
             } else if !displayText.isEmpty {
@@ -138,7 +150,7 @@ struct CalcHome: View {
             if displayText.count == 1 {
                 displayText = "0"
             } else if selectedPart != nil {
-                displayText = displayText.replacingOccurrences(of: selectedPart!.1, with: String(selectedPart!.1.dropLast()), options: .literal, range: displayText.range(of: selectedPart!.1))
+                replaceSelectedPart(with: String(selectedPart!.1.dropLast()), assign: "none")
             } else if typing {
                 displayText.removeLast()
             }
@@ -154,8 +166,7 @@ struct CalcHome: View {
                     displayText += label
                 }
             } else {
-                displayText = displayText.replacingOccurrences(of: selectedPart!.1, with: selectedPart!.1+label, options: .literal, range: displayText.range(of: selectedPart!.1))
-                selectedPart!.1 = selectedPart!.1+label
+                replaceSelectedPart(with: selectedPart!.1+label)
                 editingPart = selectedPart!.1
             }
         case "S":
@@ -163,47 +174,35 @@ struct CalcHome: View {
         case "(":
             if !editingMode {
                 displayText += label
+            } else if editingPart.isEmpty {
+                replaceSelectedPart(with: label)
+                editingPart = label
             } else {
-                if editingPart.isEmpty {
-                    displayText = displayText.replacingOccurrences(of: selectedPart!.1, with: label, options: .literal, range: displayText.range(of: selectedPart!.1))
-                    selectedPart!.1 = label
-                    editingPart = label
-                } else {
-                    editingPart += label
-                    displayText = displayText.replacingOccurrences(of: selectedPart!.1, with: editingPart, options: .literal, range: displayText.range(of: selectedPart!.1))
-                    selectedPart!.1 = editingPart
-                }
+                editingPart += label
+                replaceSelectedPart(with: editingPart)
             }
         case ")":
             if closeParaReady() {
                 if !editingMode {
                     displayText += label
+                } else if editingPart.isEmpty {
+                    replaceSelectedPart(with: label)
+                    editingPart = label
                 } else {
-                    if editingPart.isEmpty {
-                        displayText = displayText.replacingOccurrences(of: selectedPart!.1, with: label, options: .literal, range: displayText.range(of: selectedPart!.1))
-                        selectedPart!.1 = label
-                        editingPart = label
-                    } else {
-                        editingPart += label
-                        displayText = displayText.replacingOccurrences(of: selectedPart!.1, with: editingPart, options: .literal, range: displayText.range(of: selectedPart!.1))
-                        selectedPart!.1 = editingPart
-                    }
+                    editingPart += label
+                    replaceSelectedPart(with: editingPart)
                 }
             }
         default:
             if displayText != "0" {
                 if !editingMode {
                     displayText += label
+                } else if editingPart.isEmpty {
+                    replaceSelectedPart(with: label)
+                    editingPart = label
                 } else {
-                    if editingPart.isEmpty {
-                        displayText = displayText.replacingOccurrences(of: selectedPart!.1, with: label, options: .literal, range: displayText.range(of: selectedPart!.1))
-                        selectedPart!.1 = label
-                        editingPart = label
-                    } else {
-                        editingPart += label
-                        displayText = displayText.replacingOccurrences(of: selectedPart!.1, with: editingPart, options: .literal, range: displayText.range(of: selectedPart!.1))
-                        selectedPart!.1 = editingPart
-                    }
+                    editingPart += label
+                    replaceSelectedPart(with: editingPart)
                 }
             } else {
                 displayText = label
