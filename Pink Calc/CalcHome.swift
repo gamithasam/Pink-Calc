@@ -220,6 +220,84 @@ struct CalcHome: View {
         }
     }
     
+    func fixUpExpression(_ expression: String) -> String {
+        var validExpression = expression
+        
+        // Remove ( just beofre an operator
+        let paraOpRegex = try! NSRegularExpression(pattern: "\\((?=[+\\-*/])", options: [])
+        let paraOpRange = NSRange(location: 0, length: validExpression.utf16.count)
+        validExpression = paraOpRegex.stringByReplacingMatches(in: validExpression, options: [], range: paraOpRange, withTemplate: "")
+        
+        // Removes ()
+        validExpression = validExpression.replacingOccurrences(of: "()", with: "")
+        
+        if let lastChar = validExpression.last {
+            if "+-*/.".contains(lastChar) {
+                // Remove the last character if it's an operator or a period
+                validExpression.removeLast()
+            } else if lastChar == "(" {
+                // Remove the last character if it's an open paranthesis
+                validExpression.removeLast()
+                if let newLastChar = validExpression.last, "+-*/.".contains(newLastChar) {
+                    // Remove the new last character if it's an operator or a period
+                    validExpression.removeLast()
+                }
+            }
+        }
+        
+        // Replace ( with *( where appropriate
+        let paraMultiRegex = try! NSRegularExpression(pattern: "(?<=\\d)\\(", options: [])
+        let paraMultiRange = NSRange(location: 0, length: validExpression.utf16.count)
+        validExpression = paraMultiRegex.stringByReplacingMatches(in: validExpression, options: [], range: paraMultiRange, withTemplate: "*(")
+        
+        // Remove extra closing parantheses
+        var paraBalancedExpression = ""
+        var openCount = 0
+        for char in validExpression {
+            if char == "(" {
+                openCount += 1
+                paraBalancedExpression.append(char)
+            } else if char == ")" {
+                if openCount > 0 {
+                    openCount -= 1
+                    paraBalancedExpression.append(char)
+                }
+            } else {
+                paraBalancedExpression.append(char)
+            }
+        }
+        validExpression = paraBalancedExpression
+        
+        // Auto complete open parantheses
+        let openParaCount = validExpression.filter { $0 == "(" }.count
+        let closeParaCount = validExpression.filter { $0 == ")" }.count
+        validExpression.append(String(repeating: ")", count: openParaCount-closeParaCount))
+        
+        // Remove invalid decimal points
+        let decRegex = try! NSRegularExpression(pattern: "\\.(?=[\\+\\-\\/\\*\\(\\)])", options: [])
+        let decRange = NSRange(location: 0, length: validExpression.utf16.count)
+        validExpression = decRegex.stringByReplacingMatches(in: validExpression, options: [], range: decRange, withTemplate: "")
+        
+        if let lastChar = validExpression.last {
+            if "+-*/.".contains(lastChar) {
+                // Remove the last character if it's an operator or a period
+                validExpression.removeLast()
+            } else if lastChar == "(" {
+                // Remove the last character if it's an open paranthesis
+                validExpression.removeLast()
+                if let newLastChar = validExpression.last, "+-*/.".contains(newLastChar) {
+                    // Remove the new last character if it's an operator or a period
+                    validExpression.removeLast()
+                }
+            }
+        }
+        
+        // Add 1 after * and before )
+        validExpression = validExpression.replacingOccurrences(of: "*)", with: "*1)")
+        
+        return validExpression
+    }
+    
     func calculate() -> String {
         // Handle zero division
         if displayText.contains("÷0") {
@@ -229,78 +307,9 @@ struct CalcHome: View {
             var validExpression = displayText
                 .replacingOccurrences(of: "×", with: "*")
                 .replacingOccurrences(of: "÷", with: "/")
-            
-            // Remove ( just beofre an operator
-            let paraOpRegex = try! NSRegularExpression(pattern: "\\((?=[+\\-*/])", options: [])
-            let paraOpRange = NSRange(location: 0, length: validExpression.utf16.count)
-            validExpression = paraOpRegex.stringByReplacingMatches(in: validExpression, options: [], range: paraOpRange, withTemplate: "")
-            
-            // Removes ()
-            validExpression = validExpression.replacingOccurrences(of: "()", with: "")
-            
-            if let lastChar = validExpression.last {
-                if "+-*/.".contains(lastChar) {
-                    // Remove the last character if it's an operator or a period
-                    validExpression.removeLast()
-                } else if lastChar == "(" {
-                    // Remove the last character if it's an open paranthesis
-                    validExpression.removeLast()
-                    if let newLastChar = validExpression.last, "+-*/.".contains(newLastChar) {
-                        // Remove the new last character if it's an operator or a period
-                        validExpression.removeLast()
-                    }
-                }
-            }
-            
-            // Replace ( with *( where appropriate
-            let paraMultiRegex = try! NSRegularExpression(pattern: "(?<=\\d)\\(", options: [])
-            let paraMultiRange = NSRange(location: 0, length: validExpression.utf16.count)
-            validExpression = paraMultiRegex.stringByReplacingMatches(in: validExpression, options: [], range: paraMultiRange, withTemplate: "*(")
-            
-            // Remove extra closing parantheses
-            var paraBalancedExpression = ""
-            var openCount = 0
-            for char in validExpression {
-                if char == "(" {
-                    openCount += 1
-                    paraBalancedExpression.append(char)
-                } else if char == ")" {
-                    if openCount > 0 {
-                        openCount -= 1
-                        paraBalancedExpression.append(char)
-                    }
-                } else {
-                    paraBalancedExpression.append(char)
-                }
-            }
-            validExpression = paraBalancedExpression
-            
-            // Auto complete open parantheses
-            let openParaCount = validExpression.filter { $0 == "(" }.count
-            let closeParaCount = validExpression.filter { $0 == ")" }.count
-            validExpression.append(String(repeating: ")", count: openParaCount-closeParaCount))
-            
-            // Remove invalid decimal points
-            let decRegex = try! NSRegularExpression(pattern: "\\.(?=[\\+\\-\\/\\*\\(\\)])", options: [])
-            let decRange = NSRange(location: 0, length: validExpression.utf16.count)
-            validExpression = decRegex.stringByReplacingMatches(in: validExpression, options: [], range: decRange, withTemplate: "")
-            
-            if let lastChar = validExpression.last {
-                if "+-*/.".contains(lastChar) {
-                    // Remove the last character if it's an operator or a period
-                    validExpression.removeLast()
-                } else if lastChar == "(" {
-                    // Remove the last character if it's an open paranthesis
-                    validExpression.removeLast()
-                    if let newLastChar = validExpression.last, "+-*/.".contains(newLastChar) {
-                        // Remove the new last character if it's an operator or a period
-                        validExpression.removeLast()
-                    }
-                }
-            }
-            
-            // Add 1 after * and before )
-            validExpression = validExpression.replacingOccurrences(of: "*)", with: "*1)")
+        
+            // Fix up expression
+            validExpression = fixUpExpression(validExpression)
             
             // Convert expression to Expression
             print(validExpression)
