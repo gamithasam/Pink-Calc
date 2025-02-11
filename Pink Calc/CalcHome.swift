@@ -7,6 +7,10 @@
 
 import SwiftUI
 import Foundation
+import Expression
+
+// Override Apple's Expression with NumericExpression locally
+typealias Expression = NumericExpression
 
 struct CalcHome: View {
     @State var displayText: String = "0"
@@ -16,6 +20,7 @@ struct CalcHome: View {
     @State var historyMenu: Bool = false
     @State private var selectedPart: (Int, String)? = nil
     @State private var editingPart: String = ""
+    @State private var scrollToEnd: Bool = false
     var editingMode: Bool {
         return selectedPart != nil
     }
@@ -273,18 +278,19 @@ struct CalcHome: View {
             // Add 1 after * and before )
             validExpression = validExpression.replacingOccurrences(of: "*)", with: "*1)")
             
-            // Convert expression to NSExpression
+            // Convert expression to Expression
             print(validExpression)
-            let expression = NSExpression(format: validExpression)
-            // Handle invalid NSExpressions
-            if let result = expression.expressionValue(with: nil, context: nil) as? Double {
+            let expression = Expression(validExpression)
+            // Handle invalid Expressions and evaluate
+            do {
+                let result = try expression.evaluate()
                 // Display int as int
                 if result.truncatingRemainder(dividingBy: 1) == 0 {
                     return "\(Int(result))"
                 } else {
                     return "\(result)"
                 }
-            } else {
+            } catch {
                 return "Error"
             }
         }
